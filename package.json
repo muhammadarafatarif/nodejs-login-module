@@ -1,0 +1,29 @@
+{
+  "name": "nodejs-login-module",
+  "version": "1.0.0",
+  "description": "login functionality with JWT authentication in NodeJS",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/muhammadarafatarif/nodejs-login-module.git"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "mongodb",
+    "JWT",
+    "typscript"
+  ],
+  "author": "Muhammad Arafat Arif",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/muhammadarafatarif/nodejs-login-module/issues"
+  },
+  "homepage": "https://github.com/muhammadarafatarif/nodejs-login-module#readme",
+  "dependencies": {
+    "express": "^4.17.2"
+  }
+}
