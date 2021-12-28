@@ -28,5 +28,9 @@
     "express": "^4.17.2",
     "mongoose": "^6.1.4",
     "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "jsonwebtoken": "^8.5.1"
   }
 }
