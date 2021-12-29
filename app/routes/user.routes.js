@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
 
-var fetchUsers = require('../middleware/fetchuser');
+var fetchuser = require('../middleware/fetchuser');
 
 const UserCtrl = require('../controllers/user.controller');
 
@@ -34,7 +34,7 @@ router.post("/register", [
     //     return true;
     // }),
 ],
-(req, res, next) => {
+function (req, res, next) {
     const error = validationResult(req).formatWith(({ msg }) => msg);
 
     const hasError = !error.isEmpty();
@@ -44,8 +44,7 @@ router.post("/register", [
     } else {
         next();
     }
-},
-UserCtrl.apiUserCreate);
+}, UserCtrl.apiCreateUser);
 
 // ROUTE 2: Login
 router.post("/login", [
@@ -57,7 +56,7 @@ router.post("/login", [
         .exists()
         .withMessage("Password cannot be blank")
 ],
-(req, res, next) => {
+function (req, res, next) {
     const error = validationResult(req).formatWith(({ msg }) => msg);
 
     const hasError = !error.isEmpty();
@@ -67,7 +66,9 @@ router.post("/login", [
     } else {
         next();
     }
-},
-UserCtrl.apiUserLogin);
+}, UserCtrl.apiUserLogin);
+
+// ROUTE 3: getuser
+router.post("/getuser", fetchuser, UserCtrl.apiGetUserById);
 
 module.exports = router;
