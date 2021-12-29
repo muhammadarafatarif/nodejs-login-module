@@ -30,7 +30,8 @@
     "nodemon": "^2.0.15"
   },
   "dependencies": {
-    "crypto": "^1.0.1",
+    "bcryptjs": "^2.4.3",
+    "express-validator": "^6.14.0",
     "jsonwebtoken": "^8.5.1"
   }
 }

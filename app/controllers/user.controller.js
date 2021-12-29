@@ -1,18 +1,36 @@
 const UserService = require('../services/userService');
+require('dotenv').config();
+const bcrypt = require('bcryptjs');
+var jwt = require('jsonwebtoken');
 
-const jwt = require('jsonwebtoken');
-jwtKey = "jwt";
 
 module.exports = class User{
 
-    static async apiUserRegister(req, res, next){
+    static async apiUserCreate(req, res, next){
         try {
-           const userRegister =  await UserService.userRegister(req.body).then((result) => {
-            jwt.sign({result}, jwtKey, {expiresIn:"300s"}, (err, token) => {
-                // res.status(201).json(userRegister);
-                res.status(201).json({token});
+
+            let user = await UserService.getUserbyEmail(req.body.email);
+            if( user ) {
+                return res.status(400).json({error: 'Sorry a user with this email is already exists'});
+            }
+
+            const salt = await bcrypt.genSalt(10);
+            req.body.password = await bcrypt.hash(req.body.password, salt);
+
+            const userRegister =  await UserService.userCreate(req.body).then((result) => {
+
+                const data = {
+                    user: {
+                        id: result.id
+                    }
+                }
+                const authToken = jwt.sign(data, process.env.JWT_SECRET);
+
+                //res.status(201).json(result);
+
+                res.json({authtoken: authToken});
             });
-        });
+
         } catch (error) {
            res.status(500).json({error: error});
         }
@@ -20,22 +38,32 @@ module.exports = class User{
 
     static async apiUserLogin(req, res) {
         try {
-            let password = req.body.password;
-            let email = req.body.email;
-            const user = await UserService.userLogin(email, password);
-            console.warn(user);
-            res.json(user);
-            // if( user ){
-                
 
-            //     jwt.sign({result}, jwtKey, {expiresIn:"300s"}, (err, token) => {
-            //         // res.status(201).json(userRegister);
-            //         res.status(200).json({token});
-            //     });
-            // }
+            let email = req.body.email;
+
+            let user = await UserService.getUserbyEmail(email);
+            if( ! user ){
+                return res.status(400).json({error: "Please try to login with correct credentials"});
+            }
+
+            const passwordCompare = await bcrypt.compare(req.body.password, user.password);
+
+            if( ! passwordCompare ) {
+                return res.status(400).json({error: "Please try to login with correct credentials"});
+            }
+
+            const data = {
+                user: {
+                    id: user.id
+                }
+            }
+            const authToken = jwt.sign(data, process.env.JWT_SECRET);
+            res.json({authtoken: authToken});
+            // res.json(user);
 
         } catch (error) {
-            res.status(500).json({error: error})
+            console.error(error.message);
+            res.status(500).send("internal Server Error");
         }
     }
 }
